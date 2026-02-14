@@ -2659,3 +2659,34 @@ Since you previously asked about queues & 1M jobs/day:
  OAuth providers
 
  Event-driven architecture
+
+ # 🚀 2026 Developer Command Center: Tech Stack & Workflow
+
+This document outlines the professional Agentic AI development environment I’ve built for orchestrating modular, enterprise-grade applications.
+
+---
+
+## 🛠️ Tech Stack Breakdown
+
+| Category | Technology | Purpose in my Workflow |
+| :--- | :--- | :--- |
+| **Languages** | TypeScript, JavaScript, PHP | Enables high-speed, type-safe development across both Node.js and PHP ecosystems. |
+| **Frameworks** | **NestJS & Laravel** | A hybrid powerhouse: **NestJS** for scalable, modular microservices and **Laravel** for robust, feature-rich backends and rapid API development. |
+| **Data Layer** | **PostgreSQL (via Prisma)** | Using **Prisma ORM** as the "Single Source of Truth." This allows my AI agents to parse the `schema.prisma` file for automated migrations and instant type-safe queries. |
+| **Environment** | **Docker & Dev Containers** | Eliminates "environment drift" by running the entire AI-driven dev environment in isolated containers, ensuring 100% consistency from local to production. |
+| **Agentic Core** | **Aider (v0.86.2) & Cline** | My "Heavy Lifters." These agents perform repository-wide refactoring, autonomous debugging, and automated test-driven development (TDD). |
+| **Local AI** | **Ollama** | Running **Qwen2.5-Coder** locally for zero-cost, private code-completion, and routine scripting to optimize API token usage. |
+| **High-Tier AI** | **Claude 3.7 / GPT-5.2** | Subscribed flagship models that provide high-level strategic thinking for complex architectural decisions and deep logic debugging. |
+
+---
+
+## 🤖 Strategic Workflow Philosophy
+
+* **Architect over Coder:** I focus on defining the "Definition of Done" and architectural constraints, while Agentic AI handles the implementation.
+* **Schema-First Development:** Using Prisma and strict TypeScript types to provide AI agents with the necessary context to prevent hallucinations.
+* **Environment Isolation:** Developing exclusively inside Docker Dev Containers to maintain a clean host machine and reproducible builds.
+* **Hybrid Intelligence:** Seamlessly switching between local models (Ollama) for privacy/speed and high-tier models (Claude/GPT) for complex reasoning.
+
+---
+
+> **"In 2026, the best developers don't just write code; they orchestrate agents to build systems."**
