@@ -1,7 +1,8 @@
-# Aider Config for NestJS 11 Multi-Tenant SaaS
-model: claude-3-7-sonnet
+# Aider Config for NestJS 11 Multi-Tenant SaaS (Gemini 3 Optimized)
+model: gemini/gemini-3-pro-preview
 edit-format: architect
 
+# This tells Aider to always include these files in every session
 read:
   - src/app.module.ts
   - prisma/schema.prisma
@@ -14,3 +15,7 @@ auto-test: true
 # Guardrails
 attribute-author: true
 commit: true
+
+# Use the specific Gemini API key if you don't want to use export
+# (Optional: Remove the line below if you prefer using 'export' in terminal)
+api-key: gemini=AIzaSyDpsijF0Gs4bAFCfe8lUMsoPfNYf2eC0v0
