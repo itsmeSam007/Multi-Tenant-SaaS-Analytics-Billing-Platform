@@ -10,12 +10,12 @@ read:
 
 # Updated Test Command for NestJS
 test-command: npm run test
-auto-test: true
+# CHANGE: Set to false so Aider doesn't crash on launch while Jest is busy
+auto-test: false
 
 # Guardrails
 attribute-author: true
 commit: true
 
-# Use the specific Gemini API key if you don't want to use export
-# (Optional: Remove the line below if you prefer using 'export' in terminal)
+# API Key
 api-key: gemini=AIzaSyDpsijF0Gs4bAFCfe8lUMsoPfNYf2eC0v0
