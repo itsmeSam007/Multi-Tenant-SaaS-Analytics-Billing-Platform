@@ -1,0 +1,16 @@
+# Aider Config for NestJS 11 Multi-Tenant SaaS
+model: claude-3-7-sonnet
+edit-format: architect
+
+read:
+  - src/app.module.ts
+  - prisma/schema.prisma
+  - CONVENTIONS.md
+
+# Updated Test Command for NestJS
+test-command: npm run test
+auto-test: true
+
+# Guardrails
+attribute-author: true
+commit: true
