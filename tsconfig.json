@@ -12,7 +12,8 @@
     "experimentalDecorators": true,
     "sourceMap": true,
     "incremental": false,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "ignoreDeprecations": "6.0"
   },
   "include": ["src/**/*.ts"],
   "exclude": [
