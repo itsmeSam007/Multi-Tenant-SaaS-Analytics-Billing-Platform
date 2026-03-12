@@ -26,3 +26,6 @@ api-key: google=AIzaSyDpsijF0Gs4bAFCfe8lUMsoPfNYf2eC0v0
 # EXTRA PERFORMANCE for SaaS Projects
 # This reduces costs for large projects by 75-90% on repeated prompts
 cache-prompts: true
+
+# For Gemini 3.1 Pro Preview, you can use the following command to start Aider with the specified model and API key:
+#GEMINI_API_KEY=AIzaSyDpsijF0Gs4bAFCfe8lUMsoPfNYf2eC0v0 aider --model gemini/gemini-3.1-pro-preview
