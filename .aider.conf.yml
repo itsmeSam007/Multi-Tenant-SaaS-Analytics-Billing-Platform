@@ -1,5 +1,5 @@
 # Aider Config for NestJS 11 Multi-Tenant SaaS (Gemini 3 Optimized)
-model: google/gemini-3.1-pro-preview
+model: gemini/gemini-3.1-pro-preview
 edit-format: architect
 
 # This tells Aider to always include these files in every session
