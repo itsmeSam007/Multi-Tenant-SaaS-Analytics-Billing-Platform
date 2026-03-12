@@ -20,7 +20,7 @@ const config: runtime.GetPrismaClientConfig = {
   "clientVersion": "7.3.0",
   "engineVersion": "9d6ad21cbbceab97458517b147a6a09ff43aa735",
   "activeProvider": "postgresql",
-  "inlineSchema": "generator client {\n  provider     = \"prisma-client\"\n  output       = \"../src/generated/prisma\"\n  moduleFormat = \"cjs\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n}\n\nenum Role {\n  USER\n  ADMIN\n  SUPER_ADMIN\n}\n\nmodel User {\n  id           String @id @default(uuid())\n  email        String @unique\n  passwordHash String\n\n  refreshTokenHash   String?\n  refreshTokenUsedAt DateTime?\n\n  role Role @default(USER)\n\n  failedLoginCount Int       @default(0)\n  lockUntil        DateTime?\n  isActive         Boolean   @default(true)\n  failedAttempts   Int       @default(0)\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  @@map(\"users\")\n}\n\nmodel AuditLog {\n  id        String   @id @default(uuid())\n  userId    String?\n  action    String\n  ip        String?\n  userAgent String?\n  createdAt DateTime @default(now())\n}\n",
+  "inlineSchema": "generator client {\n  provider     = \"prisma-client\"\n  output       = \"../src/generated/prisma\"\n  moduleFormat = \"cjs\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n}\n\nenum Role {\n  USER\n  ADMIN\n  SUPER_ADMIN\n}\n\nmodel User {\n  id           String @id @default(uuid())\n  email        String @unique\n  passwordHash String\n\n  refreshTokenHash   String?\n  refreshTokenUsedAt DateTime?\n\n  role Role @default(USER)\n\n  failedLoginCount Int       @default(0)\n  lockUntil        DateTime?\n  isActive         Boolean   @default(true)\n  failedAttempts   Int       @default(0)\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  @@map(\"users\")\n}\n\nmodel Tenant {\n  id       String          @id @default(uuid())\n  settings TenantSettings?\n\n  @@map(\"tenants\")\n}\n\nmodel TenantSettings {\n  id                   String  @id @default(uuid())\n  theme                String  @default(\"light\")\n  notificationsEnabled Boolean @default(true)\n  tenantId             String  @unique\n  tenant               Tenant  @relation(fields: [tenantId], references: [id])\n\n  @@map(\"tenant_settings\")\n}\n",
   "runtimeDataModel": {
     "models": {},
     "enums": {},
@@ -28,7 +28,7 @@ const config: runtime.GetPrismaClientConfig = {
   }
 }
 
-config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"passwordHash\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"refreshTokenHash\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"refreshTokenUsedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"role\",\"kind\":\"enum\",\"type\":\"Role\"},{\"name\":\"failedLoginCount\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"lockUntil\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"isActive\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"failedAttempts\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"users\"},\"AuditLog\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"action\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"ip\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userAgent\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"passwordHash\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"refreshTokenHash\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"refreshTokenUsedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"role\",\"kind\":\"enum\",\"type\":\"Role\"},{\"name\":\"failedLoginCount\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"lockUntil\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"isActive\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"failedAttempts\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"users\"},\"Tenant\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"settings\",\"kind\":\"object\",\"type\":\"TenantSettings\",\"relationName\":\"TenantToTenantSettings\"}],\"dbName\":\"tenants\"},\"TenantSettings\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"theme\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"notificationsEnabled\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"tenantId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"tenant\",\"kind\":\"object\",\"type\":\"Tenant\",\"relationName\":\"TenantToTenantSettings\"}],\"dbName\":\"tenant_settings\"}},\"enums\":{},\"types\":{}}")
 
 async function decodeBase64AsWasm(wasmBase64: string): Promise<WebAssembly.Module> {
   const { Buffer } = await import('node:buffer')
@@ -187,14 +187,24 @@ export interface PrismaClient<
   get user(): Prisma.UserDelegate<ExtArgs, { omit: OmitOpts }>;
 
   /**
-   * `prisma.auditLog`: Exposes CRUD operations for the **AuditLog** model.
+   * `prisma.tenant`: Exposes CRUD operations for the **Tenant** model.
     * Example usage:
     * ```ts
-    * // Fetch zero or more AuditLogs
-    * const auditLogs = await prisma.auditLog.findMany()
+    * // Fetch zero or more Tenants
+    * const tenants = await prisma.tenant.findMany()
     * ```
     */
-  get auditLog(): Prisma.AuditLogDelegate<ExtArgs, { omit: OmitOpts }>;
+  get tenant(): Prisma.TenantDelegate<ExtArgs, { omit: OmitOpts }>;
+
+  /**
+   * `prisma.tenantSettings`: Exposes CRUD operations for the **TenantSettings** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more TenantSettings
+    * const tenantSettings = await prisma.tenantSettings.findMany()
+    * ```
+    */
+  get tenantSettings(): Prisma.TenantSettingsDelegate<ExtArgs, { omit: OmitOpts }>;
 }
 
 export function getPrismaClientClass(): PrismaClientConstructor {

@@ -1,35 +1,50 @@
-# 📜 Development Conventions & AI Guardrails
+# 📜 SaaS Development Conventions & AI Guardrails (2026 Edition)
 
-## 🏗️ Architectural Principles
-- **Pattern:** Follow the Controller-Service-Repository pattern for all modules.
-- **Modularity:** Keep modules decoupled. Business logic stays in Services; Data access stays in Repositories.
-- **Single Source of Truth:** The `schema.prisma` file is the ultimate authority on data structures. Always check it before proposing model changes.
+## 🏗️ Architectural Principles (NestJS 11)
+- **Pattern:** Strictly follow the Controller-Service-Repository pattern.
+- **Decoupling:** Business logic belongs in Services. Data access logic belongs in Repositories or specialized Prisma Service extensions.
+- **Modularity:** Every feature must reside in its own module. Shared logic must be moved to a `CommonModule` or `SharedModule`.
+- **Single Source of Truth:** `prisma/schema.prisma` is the absolute authority for data models. Always read it before proposing changes.
 
-## 🛡️ NestJS (TypeScript) Standards
-- **Strict Typing:** NO `any` allowed. Use interfaces, types, or classes for everything.
-- **Validation:** Every Controller input must use a DTO with `class-validator` decorators.
-- **Errors:** Use standard NestJS `HttpException` classes (e.g., `NotFoundException`).
-- **Dependency Injection:** Always use Constructor Injection; never use the `new` keyword for services.
+## 🛡️ TypeScript & NestJS Standards
+- **Strict Typing:** `any` is forbidden. Use `unknown` with Type Guards or specific Interfaces.
+- **Dependency Injection:** Use Constructor Injection only. Never use `new` for providers.
+- **Validation:** All inputs must have DTOs with `class-validator` and `class-transformer`.
+- **DTO Safety:** Use `PartialType` from `@nestjs/mapped-types` for updates.
+- **Errors:** Use built-in NestJS `HttpException` (e.g., `ConflictException`, `ForbiddenException`).
 
 ## 🏢 Multi-Tenancy & Security (Priority #1)
-- **Tenant Isolation:** Every database query MUST include a `tenant_id` filter.
-- **Middleware:** Use the Prisma middleware/extension to automatically inject `tenant_id` into queries.
-- **Context:** Always retrieve `tenant_id` from the `Request` object via a custom decorator (`@CurrentTenant()`).
+- **Tenant Isolation:** Use **Prisma 7 Extensions** (`$extends`), NOT legacy Middleware.
+- **Query Scoping:** Every database operation MUST be scoped to `tenant_id` via the Prisma Client extension.
+- **Context Retrieval:** Extract `tenant_id` from the request using the `@CurrentTenant()` decorator.
+- **Logic Guard:** Any query lacking an explicit `tenant_id` filter (unless globally scoped) is considered a critical security bug.
 
-## 📦 Queue & Background Jobs (BullMQ)
-- **Processors:** Keep job logic in dedicated `.processor.ts` files.
-- **Reliability:** Always implement `failed` and `completed` listeners for observability.
+## 📊 Prisma 7 & PostgreSQL Specifics
+- **Configuration:** Use `prisma.config.ts` for database connections (New in v7).
+- **Driver Adapters:** Use `@prisma/adapter-pg` with a connection pool for all operations.
+- **Type Generation:** Always run `npx prisma generate` after schema edits.
+- **Output Path:** Generated client must reside in `src/generated/client` to maintain project cleanlines.
+- **Migrations:** Use `npx prisma migrate dev` for all schema changes. Never modify the DB manually.
 
-## 🔒 NestJS 11 Specifics
-- **Typed Config:** Use the `config/` directory with `ConfigService` for all environment variables.
-- **DTOs:** Use `mapped-types` for `PartialType` in Update DTOs to maintain strict typing.
+## 📦 Background Jobs (BullMQ)
+- **Isolation:** Logic must reside in `.processor.ts` files using the `WorkerHost` pattern.
+- **Tenant Propagation:** When adding a job to a queue, the `tenant_id` must be included in the job `data` payload.
 
-## 📊 Data & Prisma
-- **Type Safety:** Always run `npx prisma generate` after schema changes.
-- **Migrations:** Never manually edit the database. Always use `npx prisma migrate dev`.
-- **PostgreSQL:** Utilize native Postgres features (Enums, JSONB) where beneficial, defined via Prisma.
+## 🤖 AI Agent Guardrails (Aider/Cline)
+- **Scope Limitation:** Only modify files explicitly added to the chat. If a "Read-Only" file needs changes, stop and ask for permission.
+- **Safe App Registration:** When adding to `app.module.ts`, append to the `imports` array. Do not reorder or delete existing lines.
+- **Test-Driven Development:** Draft a Vitest/Jest test file *before* or *alongside* the feature implementation.
+- **Conventional Commits:** Use `feat:`, `fix:`, `refactor:`, or `docs:` for all generated commits.
+- **Self-Correction:** If a test or build fails, analyze the log and fix the code autonomously before reporting completion.
 
-## 🤖 Agentic Behavior & Commits
-- **Test-First**: Before writing a feature, draft the unit test using Jest.
-- **Conventional Commits**: Use `feat:`, `fix:`, `refactor:`, or `docs:` for all AI-generated commits.
-- **Self-Correction**: If a test fails, analyze the stack trace and iterate until the module is "Error-Free."
+## 📁 Folder Structure & Naming
+- **Domain Modules (`src/modules/[name]/`):** Use singular kebab-case for the name.
+  - *Example:* `src/modules/project-management/`
+- **Internal File Structure:** Every module must contain:
+  - `[name].module.ts` (Entry point)
+  - `[name].controller.ts` (Routing & Request handling)
+  - `[name].service.ts` (Business logic)
+  - `dto/` (Input validation classes)
+  - `entities/` (If using non-Prisma local types)
+- **Shared Utilities (`src/common/`):**
+  - `guards/`, `interceptors/`, `decorators/`, `pipes/`

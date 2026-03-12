@@ -1,5 +1,5 @@
 # Aider Config for NestJS 11 Multi-Tenant SaaS (Gemini 3 Optimized)
-model: gemini/gemini-3-pro-preview
+model: google/gemini-3.1-pro-preview
 edit-format: architect
 
 # This tells Aider to always include these files in every session
@@ -10,12 +10,19 @@ read:
 
 # Updated Test Command for NestJS
 test-command: npm run test
-# CHANGE: Set to false so Aider doesn't crash on launch while Jest is busy
 auto-test: false
 
 # Guardrails
 attribute-author: true
 commit: true
 
+# API Key - RECOMMENDED: Use 'export GEMINI_API_KEY=...' in your terminal instead!
+# If you must hardcode, ensure it has the 'google=' provider prefix.
+# api-key: google=AIzaSyDpsijF0Gs4bAFCfe8lUMsoPfNYf2eC0v0
+
 # API Key
-api-key: gemini=AIzaSyDpsijF0Gs4bAFCfe8lUMsoPfNYf2eC0v0
+api-key: google=AIzaSyDpsijF0Gs4bAFCfe8lUMsoPfNYf2eC0v0
+
+# EXTRA PERFORMANCE for SaaS Projects
+# This reduces costs for large projects by 75-90% on repeated prompts
+cache-prompts: true
